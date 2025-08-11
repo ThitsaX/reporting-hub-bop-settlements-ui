@@ -30,6 +30,7 @@ export const initialState: ConfigState = {
   loginEndpoint: '',
   logoutEndpoint: '',
   isAuthEnabled: true,
+  userEmail: '',
 };
 
 const slice = createSlice({
@@ -40,6 +41,12 @@ const slice = createSlice({
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    setUserEmail(state: ConfigState, action: PayloadAction<string>) {
+      return {
+        ...state,
+        userEmail: action.payload,
       };
     },
   },
