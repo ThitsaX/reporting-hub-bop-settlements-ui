@@ -1,4 +1,6 @@
 /* eslint-disable no-continue */
+import { store } from 'store';
+import { getUserEmail } from 'App/selectors';
 import { strict as assert } from 'assert';
 import { PayloadAction } from '@reduxjs/toolkit';
 import api from 'utils/api';
@@ -146,6 +148,7 @@ function* processAdjustments({
       continue;
     }
 
+    const userEmail = getUserEmail(store.getState());
     if (adjustment.amount > 0) {
       // Make the call to process funds in, then poll the balance until it's reduced
       const request = {
@@ -154,6 +157,14 @@ function* processAdjustments({
         body: {
           action: 'recordFundsIn',
           externalReference: `BOP settlement ID ${settlement.id}`,
+          extensionList: {
+            extension: [
+              {
+                key: 'user',
+                value: userEmail,
+              },
+            ],
+          },
           reason: description,
           amount: {
             amount: Math.abs(adjustment.amount),
@@ -185,6 +196,14 @@ function* processAdjustments({
         body: {
           action: 'recordFundsOutPrepareReserve',
           externalReference: `BOP settlement ID ${settlement.id}`,
+          extensionList: {
+            extension: [
+              {
+                key: 'user',
+                value: userEmail,
+              },
+            ],
+          },
           reason: description,
           amount: {
             amount: Math.abs(adjustment.amount),
